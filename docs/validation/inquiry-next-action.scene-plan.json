@@ -1,0 +1,465 @@
+{
+  "version": "1.1",
+  "metadata": {
+    "status": "draft_for_approval",
+    "total_duration_seconds": 24,
+    "references": [
+      {
+        "id": "b1",
+        "url": "https://www.ibm.com/design/language/animation/tips-and-techniques/",
+        "design_note": "Focus, Rhythm, and Type/Presentation: one focal action, stagger, readable rest."
+      },
+      {
+        "id": "b2",
+        "url": "https://www.ibm.com/design/language/illustration/flat-style/usage/",
+        "design_note": "Examples in use: simple geometry and a directional route; original forms and palette."
+      }
+    ],
+    "proposed_direction": "B \u2014 Routing diagram",
+    "sample_scene_ids": [
+      "routing"
+    ],
+    "sample_duration_seconds": 7,
+    "render_runtime": "remotion",
+    "composition_mode": "atelier",
+    "audio_plan": "text_led_silent",
+    "palette": {
+      "background": "#F4F3ED",
+      "ink": "#1D2927",
+      "accent": "#23785B",
+      "line": "#AABBB5"
+    }
+  },
+  "scenes": [
+    {
+      "id": "inquiry",
+      "type": "animation",
+      "description": "Original inquiry illustration",
+      "start_seconds": 0,
+      "end_seconds": 4,
+      "script_section_id": "inquiry",
+      "framing": "Editorial split: copy at x=96, illustration at x=1120; safe margin 96px.",
+      "movement": "Scene-relative timed action followed by a readable hold",
+      "transition_in": "cut",
+      "transition_out": "cut",
+      "hero_moment": false,
+      "metadata": {
+        "animation_mode": "custom_vector_motion",
+        "camera": "N/A \u2014 native 2D composition",
+        "overlays": [
+          {
+            "text": "A new inquiry arrives.",
+            "placement": "As specified by layout"
+          }
+        ],
+        "type_roles": {
+          "heading_px": 72,
+          "label_px": 36,
+          "disclosure_px": 28
+        }
+      },
+      "required_assets": [
+        {
+          "id": "inquiry-svg",
+          "type": "animation",
+          "description": "Agent authors original project-local SVG/React artwork and exact type; video_compose renders via Remotion atelier. No stock scene imports.",
+          "source": "generate",
+          "production_tool": "video_compose",
+          "acceptance_criteria": [
+            "Exact planned copy",
+            "Original readable vector art",
+            "No unapproved external assets"
+          ]
+        }
+      ],
+      "creative_spec": {
+        "primary_subject": "Original inquiry illustration",
+        "on_screen_text": [
+          "A new inquiry arrives."
+        ],
+        "reference_ids": [
+          "b1",
+          "b2"
+        ],
+        "layout": "Editorial split: copy at x=96, illustration at x=1120; safe margin 96px.",
+        "typography": {
+          "font_family": "Arial",
+          "size_px": 72,
+          "weight": 700,
+          "color": "#1D2927"
+        },
+        "motion_beats": [
+          {
+            "start_seconds": 0,
+            "end_seconds": 0.8,
+            "action": "Inquiry enters from right",
+            "easing": "cubic-out"
+          },
+          {
+            "start_seconds": 0.8,
+            "end_seconds": 2,
+            "action": "Settle at the focal point",
+            "easing": "sine-out"
+          },
+          {
+            "start_seconds": 2,
+            "end_seconds": 4,
+            "action": "Hold for reading",
+            "easing": "none"
+          }
+        ],
+        "asset_ids": [
+          "inquiry-svg"
+        ],
+        "acceptance_criteria": [
+          "Copy matches exactly",
+          "No clipping inside 96px safe area",
+          "Labels readable at half-size viewing",
+          "Motion advances the stated subject",
+          "Final state has an explicit readable hold"
+        ]
+      }
+    },
+    {
+      "id": "routing",
+      "type": "animation",
+      "description": "Owner and next-action routing diagram",
+      "start_seconds": 4,
+      "end_seconds": 11,
+      "script_section_id": "routing",
+      "framing": "Header top-left; diagram spans x=160..1760. Labels 36px, main copy 72px. No UI frame.",
+      "movement": "Scene-relative timed action followed by a readable hold",
+      "transition_in": "cut",
+      "transition_out": "cut",
+      "hero_moment": true,
+      "metadata": {
+        "animation_mode": "custom_vector_motion",
+        "camera": "N/A \u2014 native 2D composition",
+        "overlays": [
+          {
+            "text": "Who owns the next step?",
+            "placement": "As specified by layout"
+          },
+          {
+            "text": "Inquiry",
+            "placement": "As specified by layout"
+          },
+          {
+            "text": "Owner",
+            "placement": "As specified by layout"
+          },
+          {
+            "text": "Next action",
+            "placement": "As specified by layout"
+          }
+        ],
+        "type_roles": {
+          "heading_px": 72,
+          "label_px": 36,
+          "disclosure_px": 28
+        }
+      },
+      "required_assets": [
+        {
+          "id": "routing-svg",
+          "type": "animation",
+          "description": "Agent authors original project-local SVG/React artwork and exact type; video_compose renders via Remotion atelier. No stock scene imports.",
+          "source": "generate",
+          "production_tool": "video_compose",
+          "acceptance_criteria": [
+            "Exact planned copy",
+            "Original readable vector art",
+            "No unapproved external assets"
+          ]
+        }
+      ],
+      "creative_spec": {
+        "primary_subject": "Owner and next-action routing diagram",
+        "on_screen_text": [
+          "Who owns the next step?",
+          "Inquiry",
+          "Owner",
+          "Next action"
+        ],
+        "reference_ids": [
+          "b1",
+          "b2"
+        ],
+        "layout": "Header top-left; diagram spans x=160..1760. Labels 36px, main copy 72px. No UI frame.",
+        "typography": {
+          "font_family": "Arial",
+          "size_px": 72,
+          "weight": 700,
+          "color": "#1D2927"
+        },
+        "motion_beats": [
+          {
+            "start_seconds": 0,
+            "end_seconds": 0.5,
+            "action": "Establish inquiry and question",
+            "easing": "cubic-out"
+          },
+          {
+            "start_seconds": 0.5,
+            "end_seconds": 2,
+            "action": "Reveal owner and its link after inquiry",
+            "easing": "cubic-out"
+          },
+          {
+            "start_seconds": 2,
+            "end_seconds": 3.5,
+            "action": "Reveal next action and connect it to owner",
+            "easing": "sine-out"
+          },
+          {
+            "start_seconds": 3.5,
+            "end_seconds": 5.2,
+            "action": "Green accent follows the resolved route once",
+            "easing": "sine-in-out"
+          },
+          {
+            "start_seconds": 5.2,
+            "end_seconds": 7,
+            "action": "Hold complete diagram and all labels",
+            "easing": "none"
+          }
+        ],
+        "asset_ids": [
+          "routing-svg"
+        ],
+        "acceptance_criteria": [
+          "Copy matches exactly",
+          "No clipping inside 96px safe area",
+          "Labels readable at half-size viewing",
+          "Motion advances the stated subject",
+          "Final state has an explicit readable hold"
+        ]
+      }
+    },
+    {
+      "id": "record",
+      "type": "animation",
+      "description": "Illustrative work record",
+      "start_seconds": 11,
+      "end_seconds": 19,
+      "script_section_id": "record",
+      "framing": "Header x=96; three-row record at x=520..1720. Labels/values 36px. Disclosure 28px at top-right inside safe area.",
+      "movement": "Scene-relative timed action followed by a readable hold",
+      "transition_in": "cut",
+      "transition_out": "cut",
+      "hero_moment": false,
+      "metadata": {
+        "animation_mode": "custom_vector_motion",
+        "camera": "N/A \u2014 native 2D composition",
+        "overlays": [
+          {
+            "text": "Make the next action visible.",
+            "placement": "As specified by layout"
+          },
+          {
+            "text": "Illustrative workflow",
+            "placement": "As specified by layout"
+          },
+          {
+            "text": "Owner",
+            "placement": "As specified by layout"
+          },
+          {
+            "text": "Maya",
+            "placement": "As specified by layout"
+          },
+          {
+            "text": "Next action",
+            "placement": "As specified by layout"
+          },
+          {
+            "text": "Send availability",
+            "placement": "As specified by layout"
+          },
+          {
+            "text": "Status",
+            "placement": "As specified by layout"
+          },
+          {
+            "text": "Ready",
+            "placement": "As specified by layout"
+          }
+        ],
+        "type_roles": {
+          "heading_px": 72,
+          "label_px": 36,
+          "disclosure_px": 28
+        }
+      },
+      "required_assets": [
+        {
+          "id": "record-svg",
+          "type": "animation",
+          "description": "Agent authors original project-local SVG/React artwork and exact type; video_compose renders via Remotion atelier. No stock scene imports.",
+          "source": "generate",
+          "production_tool": "video_compose",
+          "acceptance_criteria": [
+            "Exact planned copy",
+            "Original readable vector art",
+            "No unapproved external assets"
+          ]
+        }
+      ],
+      "creative_spec": {
+        "primary_subject": "Illustrative work record",
+        "on_screen_text": [
+          "Make the next action visible.",
+          "Illustrative workflow",
+          "Owner",
+          "Maya",
+          "Next action",
+          "Send availability",
+          "Status",
+          "Ready"
+        ],
+        "reference_ids": [
+          "b1",
+          "b2"
+        ],
+        "layout": "Header x=96; three-row record at x=520..1720. Labels/values 36px. Disclosure 28px at top-right inside safe area.",
+        "typography": {
+          "font_family": "Arial",
+          "size_px": 72,
+          "weight": 700,
+          "color": "#1D2927"
+        },
+        "motion_beats": [
+          {
+            "start_seconds": 0,
+            "end_seconds": 1,
+            "action": "Establish a new record layout with disclosure",
+            "easing": "cubic-out"
+          },
+          {
+            "start_seconds": 1,
+            "end_seconds": 2.5,
+            "action": "Reveal owner row",
+            "easing": "sine-out"
+          },
+          {
+            "start_seconds": 2.5,
+            "end_seconds": 4,
+            "action": "Reveal next-action row",
+            "easing": "sine-out"
+          },
+          {
+            "start_seconds": 4,
+            "end_seconds": 5,
+            "action": "Reveal ready status",
+            "easing": "sine-out"
+          },
+          {
+            "start_seconds": 5,
+            "end_seconds": 8,
+            "action": "Hold all rows for reading",
+            "easing": "none"
+          }
+        ],
+        "asset_ids": [
+          "record-svg"
+        ],
+        "acceptance_criteria": [
+          "Copy matches exactly",
+          "No clipping inside 96px safe area",
+          "Labels readable at half-size viewing",
+          "Motion advances the stated subject",
+          "Final state has an explicit readable hold"
+        ]
+      }
+    },
+    {
+      "id": "closing",
+      "type": "text_card",
+      "description": "Closing typographic statement",
+      "start_seconds": 19,
+      "end_seconds": 24,
+      "script_section_id": "closing",
+      "framing": "Full-frame type, left-aligned at x=260, maximum width 1400px. No diagram, document, or app chrome.",
+      "movement": "Scene-relative timed action followed by a readable hold",
+      "transition_in": "cut",
+      "transition_out": "cut",
+      "hero_moment": false,
+      "metadata": {
+        "animation_mode": "custom_vector_motion",
+        "camera": "N/A \u2014 native 2D composition",
+        "overlays": [
+          {
+            "text": "Give every inquiry a next action.",
+            "placement": "As specified by layout"
+          }
+        ],
+        "type_roles": {
+          "heading_px": 72,
+          "label_px": 36,
+          "disclosure_px": 28
+        }
+      },
+      "required_assets": [
+        {
+          "id": "closing-type",
+          "type": "animation",
+          "description": "Agent authors original project-local SVG/React artwork and exact type; video_compose renders via Remotion atelier. No stock scene imports.",
+          "source": "generate",
+          "production_tool": "video_compose",
+          "acceptance_criteria": [
+            "Exact planned copy",
+            "Original readable vector art",
+            "No unapproved external assets"
+          ]
+        }
+      ],
+      "creative_spec": {
+        "primary_subject": "Closing typographic statement",
+        "on_screen_text": [
+          "Give every inquiry a next action."
+        ],
+        "reference_ids": [
+          "b1",
+          "b2"
+        ],
+        "layout": "Full-frame type, left-aligned at x=260, maximum width 1400px. No diagram, document, or app chrome.",
+        "typography": {
+          "font_family": "Arial",
+          "size_px": 72,
+          "weight": 700,
+          "color": "#1D2927"
+        },
+        "motion_beats": [
+          {
+            "start_seconds": 0,
+            "end_seconds": 1.2,
+            "action": "Resolve full statement on a single axis",
+            "easing": "cubic-out"
+          },
+          {
+            "start_seconds": 1.2,
+            "end_seconds": 2,
+            "action": "Draw a single green underline",
+            "easing": "sine-out"
+          },
+          {
+            "start_seconds": 2,
+            "end_seconds": 5,
+            "action": "Hold statement without distraction",
+            "easing": "none"
+          }
+        ],
+        "asset_ids": [
+          "closing-type"
+        ],
+        "acceptance_criteria": [
+          "Copy matches exactly",
+          "No clipping inside 96px safe area",
+          "Labels readable at half-size viewing",
+          "Motion advances the stated subject",
+          "Final state has an explicit readable hold"
+        ]
+      }
+    }
+  ]
+}

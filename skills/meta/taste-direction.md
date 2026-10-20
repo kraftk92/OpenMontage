@@ -34,6 +34,42 @@ Write a `taste_profile` when the proposal or playbook needs a stronger creative 
 
 ## Process
 
+### 0. Collect brand assets and visual references up front
+
+Do this before concept development or storyboard lock, not at final composition.
+Inspect resources already in the workspace and the conversation first. Ask once
+for the missing essentials, keeping the request compact:
+
+- Brand source: website or brand guide, usable logo variants, fonts and any
+  existing imagery/product captures. Identify required assets and usage constraints.
+- Two or three visual references, with what the user likes about each: type,
+  atmosphere, framing, illustration, motion, or pacing. Include dislikes when known.
+- Intended audience and the single message the video should leave them with.
+
+Do not ask again for supplied information or require a complete asset pack. When
+the user has no references, find and inspect options, explain their relevant
+traits, and recommend a direction. When only a website is supplied, inspect its
+rendered appearance and representative sections; text extraction and a logo
+download are insufficient. Record unavailable assets and obtain approval through
+the proposal for any provisional fonts, assets, or intentionally unbranded look.
+Do not silently substitute generic styling for missing brand inputs.
+
+Record sources, local asset paths, reference frame/time cues, observations,
+missing items, and user preferences in `proposal_packet.metadata.brand_intake`.
+Translate them into a concrete **brand direction** in the existing
+`production_plan.taste_profile` and `production_plan.art_direction`: typography
+and hierarchy, palette and contrast, layout, imagery/material/atmosphere, and
+motion/pacing. State what is carried over, adapted for video, or deliberately
+omitted and why. Brand rules constrain the visual options; a logo is not the
+entire direction. Carry the essential rules inline in the production plan, not
+only as a path to a mutable document.
+
+In `scene_plan.metadata.brand_direction`, retain the approved rules, referenced
+asset paths/content hashes, and reference observations. This keeps the actual
+brand direction inside the storyboard/sample basis. Unbranded work records that
+choice explicitly. Each scene's acceptance criteria should name the applicable
+rules, and the representative sample must visibly demonstrate them.
+
 ### 1. Make a Design Read
 
 Before choosing a playbook or palette, state what the video needs to feel like and why. Tie it to the audience, promise, platform, and subject matter.
@@ -76,7 +112,8 @@ If the work uses AI image/video, mood boards, brand assets, or atelier compositi
 
 - Use one reference still per scene family or major beat.
 - Do not compress the whole direction into one mood board image.
-- For brand/product work, create or inspect a brand kit before asset generation.
+- For brand/product work, complete the intake above before visual concepts;
+  inspect a brand kit and references before sample assets or batch generation.
 - For screen demos, inspect the real UI and write a redesign/audit note before styling overlays.
 
 ### 5. Carry the Profile Downstream
@@ -124,3 +161,6 @@ Reviewer should check:
 - Are anti-patterns actually avoided?
 - Is the reference strategy present when AI images/video or atelier work depends on visual nuance?
 - Could this video belong to any topic after replacing the title? If yes, the taste direction is too generic.
+- With the logo, watermark, and end card hidden, do the sample's type, layout,
+  imagery/atmosphere, and motion still reflect the approved brand direction?
+  Record concrete reference-to-frame evidence; a cosmetic overlay does not pass.

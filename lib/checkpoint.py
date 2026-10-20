@@ -19,13 +19,13 @@ from schemas.artifacts import ARTIFACT_NAMES, validate_artifact
 # All known stages across all pipelines (used only for artifact name lookup).
 ALL_KNOWN_STAGES = frozenset([
     "research", "proposal", "idea", "script", "scene_plan",
-    "assets", "edit", "compose", "publish",
+    "sample", "assets", "edit", "compose", "publish",
 ])
 
 # Backward-compatible alias — existing code / tests that import STAGES still work.
 # New code should use get_pipeline_stages(pipeline_type) instead.
 STAGES = ["research", "proposal", "idea", "script", "scene_plan",
-          "assets", "edit", "compose", "publish"]
+          "sample", "assets", "edit", "compose", "publish"]
 
 CANONICAL_STAGE_ARTIFACTS = {
     "research": "research_brief",
@@ -33,6 +33,7 @@ CANONICAL_STAGE_ARTIFACTS = {
     "idea": "brief",
     "script": "script",
     "scene_plan": "scene_plan",
+    "sample": "sample_review",
     "assets": "asset_manifest",
     "edit": "edit_decisions",
     "compose": "render_report",
@@ -290,18 +291,22 @@ def _enforce_stage_prerequisites(
 ) -> None:
     """Require completed, approved predecessors before advancing a stage.
 
-    ``in_progress`` and failure heartbeats remain writable so an operator can
-    inspect or resume a broken run. Only lifecycle advancement
-    (``awaiting_human``/``completed``) is gated.
+    Failure heartbeats remain writable for diagnostics. Sample pipelines also
+    gate ``in_progress`` from sample onward, before any production side effects.
     """
 
-    if status not in {"awaiting_human", "completed"}:
-        return
     if not pipeline_type or pipeline_type == "unknown":
         return
 
     stages = get_pipeline_stages(pipeline_type)
     if stage not in stages:
+        return
+    # Sample pipelines must check prerequisites before entering production,
+    # not merely after the expensive work has already happened.
+    sample_or_later = "sample" in stages and stages.index(stage) >= stages.index("sample")
+    if status not in {"awaiting_human", "completed"} and not (
+        status == "in_progress" and sample_or_later
+    ):
         return
 
     incomplete: list[str] = []
@@ -344,6 +349,74 @@ def _enforce_stage_prerequisites(
             + "; ".join(details)
             + f". Pipeline order: {stages}."
         )
+
+
+def _enforce_creative_contract(
+    pipeline_dir: Path, project_id: str, pipeline_type: str | None,
+    stage: str, status: str, artifacts: dict[str, Any],
+) -> None:
+    """Validate storyboard version and current sample evidence at write time."""
+    if not pipeline_type or pipeline_type == "unknown" or status == "failed":
+        return
+    from lib.pipeline_loader import load_pipeline_readonly
+    from lib.storyboard import sample_basis_digest
+
+    manifest = load_pipeline_readonly(pipeline_type)
+    version = manifest.get("metadata", {}).get("storyboard_version")
+    if stage == "scene_plan" and status in {"awaiting_human", "completed"} and version:
+        plan = artifacts.get("scene_plan", {})
+        if not isinstance(plan, dict) or plan.get("version") != version:
+            raise CheckpointValidationError(f"Storyboard version {version} is required for new {pipeline_type} scene plans")
+        _validate_artifacts_for_stage(stage, status, artifacts)
+        script = read_checkpoint(pipeline_dir, project_id, "script")["artifacts"]["script"]
+        if abs(plan["metadata"]["total_duration_seconds"] - script["total_duration_seconds"]) > 1e-6:
+            raise CheckpointValidationError("Storyboard duration must match the approved script")
+
+    stages = [item["name"] for item in manifest["stages"]]
+    if "sample" not in stages or stages.index(stage) < stages.index("sample"):
+        return
+    if stage == "sample" and status == "in_progress":
+        return  # Predecessors are approved; the sample evidence is not ready yet.
+    project_dir = pipeline_dir / project_id
+    if stage == "sample":
+        _validate_artifacts_for_stage(stage, status, artifacts)
+        report = artifacts["sample_review"]
+    else:
+        sample = read_checkpoint(pipeline_dir, project_id, "sample")
+        if not sample or sample["status"] != "completed" or not sample.get("human_approved"):
+            raise CheckpointValidationError("An approved sample is required before batch production")
+        report = sample["artifacts"]["sample_review"]
+
+    plan = read_checkpoint(pipeline_dir, project_id, "scene_plan")["artifacts"]["scene_plan"]
+    script = read_checkpoint(pipeline_dir, project_id, "script")["artifacts"]["script"]
+    proposal = read_checkpoint(pipeline_dir, project_id, "proposal")["artifacts"]["proposal_packet"]
+    if version and plan.get("version") != version:
+        raise CheckpointValidationError("Upgrade the approved storyboard before producing a sample")
+    import math
+    duration = report["duration_seconds"]
+    total = plan["metadata"]["total_duration_seconds"]
+    if not math.isfinite(duration) or not min(5, total) <= duration <= min(8, total):
+        raise CheckpointValidationError("Sample must be 5–8 seconds within the approved film (or the full film when shorter than 5 seconds)")
+    if report["basis_digest"] != sample_basis_digest(plan, script, proposal):
+        raise CheckpointValidationError("STALE SAMPLE: script, storyboard, or production plan changed; re-sample and obtain approval")
+    production = proposal["production_plan"]
+    if report["render_runtime"] != production["render_runtime"] or report["composition_mode"] != production.get("composition_mode", "templated"):
+        raise CheckpointValidationError("Sample runtime/composition mode differs from the approved production plan")
+    if not set(report["scene_ids"]) <= {scene["id"] for scene in plan["scenes"]}:
+        raise CheckpointValidationError("Sample refers to unknown storyboard scenes")
+    for filename in [report["sample_path"], *report["review"]["frames_inspected"]]:
+        path = Path(filename)
+        path = (project_dir / path).resolve() if not path.is_absolute() else path.resolve()
+        if not path.is_relative_to(project_dir.resolve()) or not path.is_file() or path.stat().st_size == 0:
+            raise CheckpointValidationError(f"Sample evidence must be a nonempty file inside the project: {filename}")
+        if filename == report["sample_path"]:
+            import hashlib
+            digest = hashlib.sha256()
+            with path.open("rb") as handle:
+                for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+                    digest.update(chunk)
+            if digest.hexdigest() != report["sample_sha256"]:
+                raise CheckpointValidationError("Sample clip changed; inspect and approve the new sample")
 
 
 def _archive_superseded_checkpoint(path: Path, stage: str) -> None:
@@ -500,6 +573,7 @@ def write_checkpoint(
         stage,
         status,
     )
+    _enforce_creative_contract(pipeline_dir, project_id, pipeline_type, stage, status, artifacts)
 
     checkpoint = {
         "version": "1.0",

@@ -15,6 +15,13 @@ This is where words become visuals. A great script with a bad scene plan produce
 | Playbook | Active style playbook | Visual language, transitions, motion rules |
 | Layer 3 | `.agents/skills/flux-best-practices/`, `.agents/skills/beautiful-mermaid/`, `.agents/skills/manim-composer/` | Image gen, diagram, animation knowledge |
 
+## Storyboard contract (binding)
+
+Read `skills/meta/storyboard-contract.md`. Produce scene_plan version `1.1` with
+exact copy, typography, inspected references, timed motion/holds, and linked
+asset tasks. In atelier mode stock scene catalogs below are mechanics references
+only; each scene is hand-authored. Follow the approved authoring mode.
+
 ## Process
 
 ### Step 1: Analyze the Script

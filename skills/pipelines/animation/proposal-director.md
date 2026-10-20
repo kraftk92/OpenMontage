@@ -72,16 +72,21 @@ Before starting proposal work, check if a VideoAnalysisBrief exists for this pro
 | **Same pacing, different visual identity** | Reference: corporate blue → Ours: vibrant neon-on-black |
 | **Same narrative, different interactivity** | Reference: linear → Ours: data-driven with animated charts |
 
-**Mandatory Sample Protocol:** After concept approval, produce a 10-15 second sample
-to validate the animation style before full production.
-
-**When no VideoAnalysisBrief is present:** Skip this step and proceed normally.
+**Mandatory Sample Protocol:** Every production, including a rough idea without
+an external video reference, follows the top-level `sample` stage AFTER approved
+script and scene_plan and BEFORE batch assets. Produce a representative 5–8 second
+composed sample under `skills/meta/visual-sample-director.md`. Do not generate a
+preview inside proposal, skip it, or batch the full assets before approval.
 
 ### Step 1: Absorb the Research (or Direct Brief)
 
 **If a `research_brief` artifact exists:** Read it thoroughly. Extract:
 
-**If no research_brief exists (direct user brief):** The user has given you a creative brief directly. This is common for short videos (30-60s) where formal research is overkill. Use the user's brief as your input and proceed to Step 2. Note the missing research as a limitation — you won't have data_points, technique references, or audience_insights to draw from, so concept design relies on your knowledge and the user's direction.
+**If no research_brief exists (including a direct user brief):** Complete the
+manifest's research stage first, using the brief to narrow the investigation.
+Do not bypass the required predecessor, fabricate evidence to fill a quota, or
+ask the user to supply the research. Separate user-confirmed business facts,
+sourced claims, and creative recommendations.
 
 **When a research_brief IS available,** extract:
 
@@ -124,6 +129,12 @@ Record all findings. **Do not propose an animation mode that requires tools you 
 This is the key differentiator from the explainer proposal. **Present the user with concrete animation approaches, explain what each looks like, what tools/keys they need, and what's already available.**
 
 Before locking animation mode or visual identity, read `skills/meta/taste-direction.md` and write a `production_plan.taste_profile`. The three dials (`visual_variance`, `motion_intensity`, `information_density`) should explain whether the concept needs calm data builds, kinetic typography, dense diagrams, reference stills, or a custom/atelier visual system.
+
+Complete its brand-asset and visual-reference intake before developing concepts.
+Record inspected sources/preferences/gaps in `metadata.brand_intake`, translate
+them into concrete visual rules, and present those rules with the directions.
+The representative sample must demonstrate the actual brand treatment, beyond
+logo or end-card placement, before remaining assets or full-video generation.
 
 #### Step 3a: Tool Availability Scan
 
@@ -256,7 +267,7 @@ Don't dump the full proposal at once. Build understanding step by step:
 5. **Production plan for selected concept** (tools, cost, timeline):
    → User approves budget and approach.
 
-Build **at least 3 genuinely different concepts.** Start from the `angles_discovered` in the research brief and the animation mode analysis.
+Build **at least 2 genuinely different visual directions.** Start from the `angles_discovered` in the research brief and the animation mode analysis.
 
 For each concept, specify:
 
@@ -316,6 +327,12 @@ Choose from: `myth_busting`, `problem_solution`, `data_narrative`, `comparison`,
 - [ ] Each concept's approach is grounded in tool availability AND technique research
 - [ ] Each concept states which API keys/tools it requires (and flags any the user doesn't have)
 
+For each direction, put inspected reference URLs, relevant frame/time cues, and
+specific design observations in `proposal_packet.metadata.direction_references`,
+keyed by concept ID. Recommend one direction with a reason. The agent finds the
+references; the user approves the treatment. No paid mood-board generations
+without separate authorization.
+
 ### Step 5: Present Concepts and Get Selection
 
 Present all concepts clearly to the user. For each concept, show:
@@ -336,6 +353,14 @@ If the user mixes, create a new hybrid concept entry in the proposal_packet with
 Let the user select, combine, modify, or redirect.
 
 Record the selection in `selected_concept` with rationale and any modifications.
+
+Store animation-specific fields (`animation_mode`, `reuse_strategy`, and
+`audio_architecture`) in `proposal_packet.metadata.animation_plan`; do not add
+schema-forbidden keys to `selected_concept`. Audio architecture may also be
+`text_led` or `music_led` when no narration is planned.
+Store provider comparison tables in `metadata.provider_comparison`, not as a
+schema-forbidden field in `cost_estimate`. Explain unavailable alternatives;
+never invent a second available provider just to populate a comparison.
 
 ### Step 6: Build the Production Plan
 
@@ -364,7 +389,7 @@ stages:
   scene_plan:
     tools: [none — planning work]
     cost: $0
-    notes: "Scene plan must specify animation mode per scene and reuse template references"
+    notes: "Scene plan must specify animation mode per scene and design-system rules (finished scene templates only in templated mode)"
 
   assets:
     tools: [specific providers from preflight]
@@ -416,7 +441,7 @@ PROPOSAL READY FOR APPROVAL
 Concept: [selected title]
 Animation mode: [mode] — [plain description]
 Duration: [X] seconds for [platform]
-Reuse strategy: [N] unique scenes from [M] templates
+Design system: [shared rules]; finished templates only in templated mode
 Estimated cost: $[X.XX] of $[budget] budget
 Production path: [premium/standard/budget/free]
 
@@ -434,8 +459,8 @@ Validate the `proposal_packet` artifact against `schemas/artifacts/proposal_pack
 
 | Downstream Stage | What It Takes From proposal_packet |
 |------------------|------------------------------------|
-| Script Director | `selected_concept` (title, hook, key_points, animation_mode, narrative_structure) + research data |
-| Scene Director | `selected_concept.animation_mode` + `reuse_strategy` + `production_plan.playbook` |
+| Script Director | selected concept looked up by `selected_concept.concept_id` + `metadata.animation_plan` + research data + research data |
+| Scene Director | `metadata.animation_plan.animation_mode` + `reuse_strategy` + `production_plan.playbook` |
 | Asset Director | `production_plan.stages[assets].tools` — knows exactly which providers to use |
 | Executive Producer | `cost_estimate` — initializes budget tracking |
 | All stages | `approval.approved_budget_usd` — hard spending cap |
@@ -446,7 +471,7 @@ Validate the `proposal_packet` artifact against `schemas/artifacts/proposal_pack
 - **Ignoring animation approach feasibility**: If the routed image/video provider isn't available, don't propose that approach without explicitly telling the user what's needed. Read each missing tool's `install_instructions` from the registry (do NOT hardcode specific env var names here — they drift). Design around constraints OR explicitly state what's needed.
 - **Three versions of the same concept with different titles**: Structural diversity means different animation approaches, different narrative structures, different hooks.
 - **Not leveraging free tools**: Animation has a huge cost advantage — Manim, Remotion data-viz, and diagram_gen are free. If proposing expensive AI video, justify why free alternatives won't work.
-- **Over-promising visual complexity**: 20 unique hand-crafted scenes is not realistic. Design reuse strategies that look varied but share underlying templates.
+- **Over-promising visual complexity**: 20 unique hand-crafted scenes is not realistic. Reuse type, palette, and motion rules. In atelier mode author distinct scenes; shared finished templates are allowed only in templated mode.
 - **Skipping the approval gate**: This is the whole point of pre-production. No shortcuts.
 - **Ignoring mathematical accuracy**: If the research brief flagged technical accuracy constraints, the concept MUST respect them. A beautiful but wrong animation is a failure.
 - **Not distinguishing image_animation from clip_video**: These are fundamentally different. Image-based animation (Approach A) generates still images and uses Remotion for motion/crossfade. Clip-based video (Approach B) generates actual video clips with an AI video model. The user should understand this distinction clearly.

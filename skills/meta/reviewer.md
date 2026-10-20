@@ -70,6 +70,29 @@ If `proposal_packet.production_plan.taste_profile` or the active playbook's `tas
 
 At proposal stage, a missing `taste_profile` is a **suggestion** for preset/low-stakes work and a **critical** finding for atelier, product/brand, launch, hero, or custom-playbook work. At scene_plan/edit/compose, treat dial violations as **suggestion** unless they break the approved delivery promise.
 
+#### Brand intake and sample fidelity (binding)
+
+- At proposal: for branded work, verify `metadata.brand_intake` identifies the
+  inspected brand assets, visual references, user preferences and unresolved gaps.
+  The production-plan taste/art direction must translate those sources into
+  concrete visual rules. Missing input must be resolved or explicitly approved as
+  provisional; an intentionally unbranded treatment is recorded as such.
+- At scene_plan: verify `metadata.brand_direction` carries the approved rules,
+  asset paths/content hashes and reference observations; scene acceptance criteria
+  identify their applicable rules. A document pointer alone cannot bind its contents.
+- At sample: verify `sample_review.review.notes` contains brand direction evidence
+  linking sources/traits to actual reviewed frames/times. Compare typography,
+  hierarchy, palette, composition, imagery/atmosphere and motion, including any
+  approved adaptations. Logo, watermark, accent stripe and end-card presence alone
+  cannot satisfy `visual_direction`.
+- Missing required intake/evidence or a material mismatch with approved direction
+  is **critical**. The dial-violation suggestion rule above does not soften this
+  requirement. Fix the sample before remaining assets/full composition; full-run
+  authorization does not waive an unresolved creative blocker.
+- At assets/edit/compose: new branding or material visual changes require an
+  updated planning basis and revised sample under the normal approval policy.
+  Keeping the old basis while adding a "finishing layer" does not satisfy review.
+
 ### Step 5: Evaluate Success Criteria
 
 For each `success_criteria` item from the manifest:
@@ -84,7 +107,7 @@ Count findings by severity:
 |----------|--------|
 | 0 critical, any suggestions/nitpicks | **Pass** — proceed to checkpoint. Note suggestions for the record. |
 | 1+ critical findings | **Revise** — fix all critical findings, then re-review (max 2 rounds). |
-| After 2 revision rounds, still critical | **Pass with warnings** — proceed anyway, note unresolved issues. Never block indefinitely. |
+| After 2 revision rounds, still critical | **Fail and escalate** for factual errors, missing required assets, broken renders, unapproved substitutions, or sample-gate failures. Non-blocking taste suggestions may pass with warnings; never relabel a blocker to proceed. |
 
 ### Step 7: Record Review
 
@@ -121,7 +144,7 @@ Structure your review as:
 
 2. **Critical means critical.** Don't inflate severity. A missing schema field is critical. A slightly wordy paragraph is a suggestion. A comma splice is a nitpick.
 
-3. **Two rounds max.** The goal is shipping, not perfection. After two revision rounds, pass with warnings and move on. Perfectionism kills pipelines.
+3. **Two rounds max.** After the retry limit, surface concrete options for unresolved blockers. Only non-blocking suggestions may pass with warnings.
 
 4. **Review the artifact, not the process.** You're checking the output, not how it was produced. If the brief is compelling, it doesn't matter if the agent used an unusual approach.
 

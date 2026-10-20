@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
 """QA Test 08: End-to-end animated-explainer pipeline simulation.
 
-Walks through all 7 stages (idea -> publish) with synthetic artifacts,
+Walks through all 9 stages (research -> publish) with synthetic artifacts,
 validating checkpoints, artifact schemas, and cost tracking at each step.
 The compose stage runs real tools (audio_mixer + video_compose) to produce
 an actual output video. All other stages use synthetic data.
 
-No API keys needed -- uses ffmpeg-generated fixtures throughout.
+No API keys needed -- uses ffmpeg-generated fixtures throughout. Sample review
+and approval records are synthetic persistence fixtures, not creative-quality proof.
 """
 
-import sys, os, json, subprocess, shutil
+import sys, os, json, subprocess, shutil, hashlib
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -296,7 +297,8 @@ print("\n--- Stage 3: scene_plan ---")
 
 SCENE_TYPES = ["text_card", "diagram", "animation", "generated", "text_card"]
 scene_plan = {
-    "version": "1.0",
+    "version": "1.1",
+    "metadata": {"total_duration_seconds": 60, "references": [{"id": "fixture", "url": "https://example.org/fixture", "design_note": "Synthetic QA reference"}]},
     "style_playbook": "clean-professional",
     "scenes": [
         {
@@ -315,6 +317,19 @@ scene_plan = {
     ],
 }
 
+for scene in scene_plan["scenes"]:
+    for i, asset in enumerate(scene["required_assets"]):
+        asset.update(id=f"{scene['id']}-a{i}", production_tool="ffmpeg_fixture",
+                     acceptance_criteria=["Synthetic test asset exists"])
+    scene["creative_spec"] = {
+        "primary_subject": scene["description"], "on_screen_text": [],
+        "reference_ids": ["fixture"], "layout": "Full frame fixture",
+        "typography": {"font_family": "Arial", "size_px": 64, "weight": 400, "color": "#FFFFFF"},
+        "motion_beats": [{"start_seconds": 0, "end_seconds": scene["end_seconds"] - scene["start_seconds"], "action": "Hold fixture", "easing": "none"}],
+        "asset_ids": [a["id"] for a in scene["required_assets"]],
+        "acceptance_criteria": ["Fixture coverage only, not creative-quality acceptance"],
+    }
+
 try:
     validate_artifact("scene_plan", scene_plan)
     check("Scene plan validates against schema", True)
@@ -326,6 +341,32 @@ write_checkpoint(
     artifacts={"scene_plan": scene_plan},
     pipeline_type="animated-explainer",
 )
+
+# Synthetic sample gate fixture (real local media, simulated review/approval).
+from lib.storyboard import sample_basis_digest
+sample_dir = PIPELINE_DIR / PROJECT_ID / "sample"
+sample_dir.mkdir(parents=True, exist_ok=True)
+sample_clip = sample_dir / "fixture.mp4"
+ensure_video(str(sample_clip), duration=7)
+frames = []
+for i, second in enumerate([1, 2, 4, 6]):
+    frame = sample_dir / f"frame{i}.png"
+    subprocess.run(["ffmpeg", "-y", "-ss", str(second), "-i", str(sample_clip), "-frames:v", "1", str(frame)], capture_output=True, check=True)
+    frames.append(str(frame.relative_to(PIPELINE_DIR / PROJECT_ID)))
+sample_review = {
+    "version": "1.0", "sample_path": str(sample_clip.relative_to(PIPELINE_DIR / PROJECT_ID)),
+    "sample_sha256": hashlib.sha256(sample_clip.read_bytes()).hexdigest(),
+    "duration_seconds": 7, "scene_ids": ["sc1"],
+    "basis_digest": sample_basis_digest(scene_plan, script, proposal_packet),
+    "render_runtime": proposal_packet["production_plan"]["render_runtime"],
+    "composition_mode": proposal_packet["production_plan"].get("composition_mode", "templated"),
+    "review": {"frames_inspected": frames, "playback_reviewed": True,
+               "checks": {key: "pass" for key in ["exact_copy", "readability", "visual_direction", "factual_accuracy", "meaningful_motion"]},
+               "unresolved_blockers": [], "notes": "Synthetic persistence fixture; does not demonstrate creative review."},
+}
+write_checkpoint(PIPELINE_DIR, PROJECT_ID, "sample", "completed", human_approved=True,
+                 artifacts={"sample_review": sample_review}, pipeline_type="animated-explainer")
+check("Sample approval checkpoint persisted", read_checkpoint(PIPELINE_DIR, PROJECT_ID, "sample")["human_approved"])
 
 # ===================================================================
 # Stage 4: assets (generate fixtures)
@@ -625,9 +666,9 @@ write_checkpoint(
 # ===================================================================
 print("\n--- Final validation ---")
 
-E2E_STAGES = ["research", "proposal", "script", "scene_plan", "assets", "edit", "compose", "publish"]
+E2E_STAGES = ["research", "proposal", "script", "scene_plan", "sample", "assets", "edit", "compose", "publish"]
 completed = get_completed_stages(PIPELINE_DIR, PROJECT_ID)
-check("All 8 stages completed", len(completed) == 8, f"completed={completed}")
+check("All 9 stages completed", len(completed) == 9, f"completed={completed}")
 check("Next stage is None (done)", get_next_stage(PIPELINE_DIR, PROJECT_ID, "animated-explainer") is None)
 check("Stages in correct order", completed == E2E_STAGES, f"{completed}")
 

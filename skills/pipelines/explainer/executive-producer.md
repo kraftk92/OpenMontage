@@ -40,12 +40,13 @@ EP_STATE:
   budget_spent_usd: 0.0
   budget_remaining_usd: <budget_total>
 
-  # Accumulated from each stage (8 stages)
+  # Accumulated from each stage (9 stages)
   artifacts:
     research: null      # → research_brief
     proposal: null      # → proposal_packet (includes approval gate)
     script: null        # → script
     scene_plan: null    # → scene_plan
+    sample: null        # → sample_review (approved before batch assets)
     assets: null        # → asset_manifest
     edit: null          # → edit_decisions
     compose: null       # → render_report
@@ -66,6 +67,15 @@ EP_STATE:
   issues_log: []             # all issues found, with resolution status
 ```
 
+## Creative contract precedence
+
+Read `meta/storyboard-contract` and `meta/visual-sample-director`. Stage gates
+still require explicit human approval; a review PASS never grants it. The sample
+is a bounded 5–8 second production after planning approval, before batch assets.
+Do not delegate unless the user has authorized delegation. In atelier mode all
+reuse/template guidance below refers to design rules and mechanics, not finished
+scene templates. New scene-plan checkpoints require version 1.1.
+
 ## Execution Protocol
 
 ### Phase 0: Initialize
@@ -77,7 +87,7 @@ EP_STATE:
 
 ### Phase 1: Execute Stages Serially
 
-For each stage in order: `research → proposal → script → scene_plan → assets → edit → compose → publish`
+For each stage in order: `research → proposal → script → scene_plan → sample → assets → edit → compose → publish`
 
 **Pre-production stages (research, proposal)** run before any money is spent:
 - **research** gathers raw data via web search — zero cost, no tools

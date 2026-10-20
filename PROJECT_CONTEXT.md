@@ -42,7 +42,8 @@ Each tool's `agent_skills[]` field bridges Layer 1 → Layer 3. See `skills/INDE
 
 ## Key Patterns
 
-- **Pipeline state machine:** `idea -> script -> scene_plan -> assets -> edit -> compose -> publish`
+- **Pipeline state machine:** read each manifest; animation/explainer use `research -> proposal -> script -> scene_plan -> sample -> assets -> edit -> compose -> publish`.
+- **Storyboard/sample contract:** new animation/explainer plans use scene_plan v1.1; a human-approved 5–8s sample bound to the planning artifacts precedes batch assets. See `skills/meta/storyboard-contract.md` and `skills/meta/visual-sample-director.md`.
 - **Instruction-driven stages:** Each stage has a director skill (MD) that teaches the agent HOW
 - **Pipeline manifests:** Declarative YAML defining stages, skills, tools, review focus, approval gates
 - **Capability-first tool design:** Each major family should expose a selector tool plus explicit provider tools

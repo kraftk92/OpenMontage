@@ -1,5 +1,5 @@
 name: animation
-version: "2.0"
+version: "2.1"
 description: >
   Animation-first pipeline for motion graphics, diagram-led explainers, kinetic typography,
   math visuals, explicit Three.js worlds, and stylized illustrative sequences. Features a research-first pre-production
@@ -9,6 +9,8 @@ description: >
 category: animation
 stability: production
 default_checkpoint_policy: guided
+metadata:
+  storyboard_version: "1.1"
 
 # Reference video input support
 reference_input:
@@ -41,6 +43,8 @@ required_skills:
   - meta/checkpoint-protocol
   - meta/animation-runtime-selector
   - meta/voice-performance-director
+  - meta/visual-sample-director
+  - meta/storyboard-contract
 
 orchestration:
   mode: executive-producer
@@ -67,7 +71,7 @@ stages:
     produces:
       - research_brief
     tools_available: []
-    checkpoint_required: false
+    checkpoint_required: true
     human_approval_default: false
     review_focus:
       - Content landscape mapped with at least 3 existing pieces
@@ -93,31 +97,20 @@ stages:
     review_focus:
       - Concept options are genuinely different (animation mode, structure, hook)
       - Animation mode selection is grounded in technique research and tool availability
-      - Each concept includes a reuse strategy (motifs, templates, transition family)
+      - Each concept includes a coherent design system; finished scene templates are templated-mode only
       - Production plan reflects actual tool availability from preflight
       - Cost estimate is itemized and honest
       - Free/local tool options are highlighted where applicable
-      - "Audio architecture decided: single narrator / character dialogue / narrator+characters"
+      - "Audio architecture decided: single narrator / character dialogue / narrator+characters / text-led / music-led"
       - "Provider choice presented as comparison table with costs — agent recommends but user decides"
       - "render_runtime chosen explicitly — remotion for React scene stack, hyperframes for HTML/GSAP motion graphics, ffmpeg for simple concat. See skills/core/hyperframes.md and skills/meta/animation-runtime-selector.md for the decision matrix. Record in decision_log with category render_runtime_selection."
     success_criteria:
-      - Schema-valid proposal_packet with at least 3 concept_options
-      - selected_concept includes animation_mode and reuse_strategy
-      - selected_concept includes audio_architecture (single_narrator | character_dialogue | narrator_plus_characters)
+      - Schema-valid proposal_packet with at least 2 distinct concept_options
+      - metadata.animation_plan includes animation_mode and reuse_strategy
+      - metadata.animation_plan includes audio_architecture (single_narrator | character_dialogue | narrator_plus_characters | text_led | music_led)
       - cost_estimate has itemized line_items with per-tool costs
-      - cost_estimate includes provider_comparison table with at least 2 provider options
+      - metadata.provider_comparison explains viable and unavailable alternatives without inventing a second available provider
       - approval.status is "approved" or "approved_with_changes" before proceeding
-    sub_stages:
-      - name: sample
-        description: "10-15 second animation preview for reference-driven productions"
-        condition: "video_analysis_brief_exists"
-        human_approval_default: true
-        tools_available: [tts_selector, image_selector, video_selector, video_compose, audio_mixer, math_animate, diagram_gen]
-        review_focus:
-          - "Sample represents the approved animation mode faithfully"
-          - "Visual identity matches approved playbook and style"
-          - "Pacing matches reference inspiration"
-
   # ── Production ──────────────────────────────────────────────────
 
   - name: script
@@ -158,17 +151,35 @@ stages:
     checkpoint_required: true
     human_approval_default: true
     review_focus:
-      - Scene system is coherent and follows reuse strategy from proposal
+      - Scene system is coherent; atelier reuses rules and mechanics, never finished scene templates
       - Animation mode specified per scene, consistent with proposal
       - Transition logic is limited and meaningful
       - Every scene has a feasible tool path
     success_criteria:
-      - Schema-valid scene_plan artifact
+      - Schema-valid scene_plan version 1.1 with exact copy, typography, references, timed motion, and linked asset tasks
       - Every scene includes animation mode and visual treatment
+
+  - name: sample
+    skill: meta/visual-sample-director
+    required_artifacts_in: [proposal_packet, script, scene_plan]
+    produces: [sample_review]
+    required_tools: [video_compose]
+    tools_available: [video_compose, hyperframes_compose, audio_mixer, tts_selector, image_selector, video_selector, diagram_gen, math_animate, code_snippet, threejs_world, threejs_asset_catalog, atlas_3d, fal_3d, blender_world, music_gen, fal_elevenlabs_music]
+    checkpoint_required: true
+    human_approval_default: true
+    review_focus:
+      - Representative 5-8 second composed sample uses actual approved assets and runtime
+      - Exact copy, readability, visual direction, factual accuracy, and meaningful motion inspected
+      - Four real frames inspected and playback reviewed; no unresolved blockers
+      - Sample basis digest matches approved script, storyboard, and production plan
+    success_criteria:
+      - Schema-valid sample_review with real project-local sample and frame files
+      - Explicit human approval before entering batch assets
 
   - name: assets
     skill: pipelines/animation/asset-director
     required_artifacts_in:
+      - sample_review
       - scene_plan
       - script
     optional_artifacts_in:
@@ -207,7 +218,7 @@ stages:
     human_approval_default: true
     review_focus:
       - Asset production path is explicit per scene
-      - Reusable motifs and templates are prepared and referenced
+      - Design rules are consistent; finished scene templates are templated-mode only
       - Missing tool paths are surfaced honestly
       - Narration assets apply the approved voice performance plan and sample settings
       - Total cost within approved budget from proposal_packet

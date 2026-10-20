@@ -12,6 +12,13 @@ You are converting the script into a feasible animation plan. This is the stage 
 | Prior artifacts | `state.artifacts["script"]["script"]`, `state.artifacts["proposal"]["proposal_packet"]` | Beat map and tool path |
 | Playbook | Active style playbook | Palette, typography, motion consistency |
 
+## Storyboard contract (binding)
+
+Read `skills/meta/storyboard-contract.md`. Produce scene_plan version `1.1` with
+exact copy, typography, inspected references, timed motion/holds, and linked
+asset tasks. In atelier mode stock scene catalogs below are mechanics references
+only; each scene is hand-authored. Follow the approved authoring mode.
+
 ## Process
 
 ### 1. Make An Animatic-Minded Plan

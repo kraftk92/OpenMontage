@@ -43,6 +43,9 @@ Author in this order. Each step routes you to existing knowledge — do not skip
 
 ### 1. Commit to an art direction *for this subject* — the divergence engine
 Before writing any component, decide a visual language that fits **this** topic and no other.
+Complete the brand-asset and visual-reference intake in `taste-direction.md`
+before developing concepts. Derive the scene design from those sources, including
+type, layout, atmosphere and motion; do not reserve branding for a finishing overlay.
 Read **`skills/meta/taste-direction.md`** first and write the `taste_profile`: the design read,
 `visual_variance`, `motion_intensity`, `information_density`, reference strategy, and
 anti-patterns. Then use the **`visual-style`** Layer 3 skill (CREATE mode) to lock: palette, type personality,
@@ -226,7 +229,12 @@ registry (`src/components`, `src/Explainer`, etc.), and warns if `art_direction`
 - **Cost honesty.** Atelier costs more agent tokens and iteration than templated. Say so at proposal
   so the user opts in knowingly. Quality varies more without a stock baseline — mitigate with strong
   principle skills (above) and the distinctness review, not by reintroducing reuse.
-- **Checkpoint cadence.** Follow `skills/meta/checkpoint-protocol.md`: present script + scene plan
+- **Checkpoint cadence.** Animation and animated-explainer first run the mandatory
+  top-level `sample` stage after script/storyboard approval. It may author/render
+  ONLY a representative 5–8 second sequence and its assets, then stops for human
+  approval before batch assets. See `skills/meta/visual-sample-director.md`.
+  This is the sole scoped exception to the pre-compose render rule below.
+  For the full film, follow `skills/meta/checkpoint-protocol.md`: present script + scene plan
   for approval BEFORE generating assets, then the **assets gate**, then a first-render checkpoint.
   Do not batch-generate ahead of sign-off, and **do not render a draft to earn the assets review** —
   the assets gate is held *before* compose (see below).
@@ -247,7 +255,8 @@ registry (`src/components`, `src/Explainer`, etc.), and warns if `art_direction`
 
   A helper that reads the scene_plan and renders all stills is at
   `scripts/atelier_snapshots.py` (`python scripts/atelier_snapshots.py <slug>`). Then STOP at the
-  assets gate. The full/draft render is the **compose** stage, after approval.
+  assets gate. Apart from the bounded top-level sample stage, the full/draft render
+  is the **compose** stage, after approval.
 
 ## Worked precedents (for the *workflow*, not the look)
 

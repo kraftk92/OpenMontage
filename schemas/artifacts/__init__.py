@@ -19,6 +19,7 @@ ARTIFACT_NAMES = [
     "rig_plan",
     "pose_library",
     "scene_plan",
+    "sample_review",
     "action_timeline",
     "asset_manifest",
     "edit_decisions",
@@ -47,6 +48,13 @@ def validate_artifact(name: str, data: dict[str, Any]) -> None:
     """Validate artifact data against its schema. Raises on failure."""
     schema = load_schema(name)
     jsonschema.validate(instance=data, schema=schema)
+    if name == "scene_plan":
+        from lib.storyboard import validate_scene_plan
+        validate_scene_plan(data)
+    if name == "proposal_packet":
+        ids = [concept["id"] for concept in data["concept_options"]]
+        if len(set(ids)) != len(ids) or data["selected_concept"]["concept_id"] not in ids:
+            raise jsonschema.ValidationError("Concept IDs must be unique and selected_concept must reference one")
 
 
 def list_schemas() -> list[str]:

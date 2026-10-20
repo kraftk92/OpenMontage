@@ -47,8 +47,8 @@
         },
         "additionalProperties": false
       },
-      "minItems": 3,
-      "description": "At least 3 genuinely different concept directions"
+      "minItems": 2,
+      "description": "At least 2 genuinely different visual directions; recommend one"
     },
     "selected_concept": {
       "type": "object",

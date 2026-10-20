@@ -6,7 +6,7 @@
   "type": "object",
   "required": ["version", "scenes"],
   "properties": {
-    "version": { "type": "string", "const": "1.0" },
+    "version": { "type": "string", "enum": ["1.0", "1.1"] },
     "style_playbook": { "type": "string", "description": "Name of the active style playbook" },
     "scenes": {
       "type": "array",
@@ -28,6 +28,8 @@
           "transition_in": { "type": "string" },
           "transition_out": { "type": "string" },
           "overlay_notes": { "type": "string" },
+          "metadata": { "type": "object", "description": "Per-scene camera, overlays, and animation-mode notes." },
+          "creative_spec": { "$ref": "#/$defs/creative_spec" },
           "shot_language": {
             "type": "object",
             "description": "Structured cinematography vocabulary for this scene",
@@ -99,6 +101,9 @@
             "items": {
               "type": "object",
               "properties": {
+                "id": { "type": "string", "minLength": 1 },
+                "production_tool": { "type": "string", "minLength": 1 },
+                "acceptance_criteria": { "$ref": "#/$defs/nonempty_strings" },
                 "type": { "type": "string" },
                 "description": { "type": "string" },
                 "source": { "type": "string", "enum": ["generate", "source", "provided", "record"] }
@@ -113,5 +118,81 @@
     },
     "metadata": { "type": "object" }
   },
-  "additionalProperties": false
+  "additionalProperties": false,
+  "allOf": [{
+    "if": { "properties": { "version": { "const": "1.1" } } },
+    "then": {
+      "required": ["metadata"],
+      "properties": {
+        "metadata": {
+          "required": ["total_duration_seconds", "references"],
+          "properties": {
+            "total_duration_seconds": { "type": "number", "exclusiveMinimum": 0 },
+            "references": {
+              "type": "array", "minItems": 1,
+              "items": {
+                "type": "object", "required": ["id", "url", "design_note"],
+                "properties": {
+                  "id": { "type": "string", "minLength": 1 },
+                  "url": { "type": "string", "pattern": "^https?://" },
+                  "design_note": { "type": "string", "minLength": 1 }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "scenes": { "items": {
+          "required": ["creative_spec", "required_assets"],
+          "properties": { "required_assets": {
+            "minItems": 1,
+            "items": { "required": ["id", "production_tool", "acceptance_criteria"] }
+          } }
+        } }
+      }
+    }
+  }],
+  "$defs": {
+    "nonempty_strings": {
+      "type": "array", "minItems": 1, "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "creative_spec": {
+      "type": "object",
+      "required": ["primary_subject", "on_screen_text", "reference_ids", "layout", "typography", "motion_beats", "asset_ids", "acceptance_criteria"],
+      "properties": {
+        "primary_subject": { "type": "string", "minLength": 1 },
+        "on_screen_text": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "reference_ids": { "$ref": "#/$defs/nonempty_strings" },
+        "layout": { "type": "string", "minLength": 1 },
+        "typography": {
+          "type": "object", "required": ["font_family", "size_px", "weight", "color"],
+          "properties": {
+            "font_family": { "type": "string", "minLength": 1 },
+            "size_px": { "type": "number", "exclusiveMinimum": 0 },
+            "weight": { "type": "integer", "minimum": 100, "maximum": 900 },
+            "color": { "type": "string", "pattern": "^#[0-9a-fA-F]{6}$" }
+          },
+          "additionalProperties": false
+        },
+        "motion_beats": {
+          "type": "array", "minItems": 1,
+          "description": "Times are relative to scene start; explicit holds cover the full scene.",
+          "items": {
+            "type": "object", "required": ["start_seconds", "end_seconds", "action", "easing"],
+            "properties": {
+              "start_seconds": { "type": "number", "minimum": 0 },
+              "end_seconds": { "type": "number", "exclusiveMinimum": 0 },
+              "action": { "type": "string", "minLength": 1 },
+              "easing": { "type": "string", "minLength": 1 }
+            },
+            "additionalProperties": false
+          }
+        },
+        "asset_ids": { "$ref": "#/$defs/nonempty_strings" },
+        "acceptance_criteria": { "$ref": "#/$defs/nonempty_strings" }
+      },
+      "additionalProperties": false
+    }
+  }
 }

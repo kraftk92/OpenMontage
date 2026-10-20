@@ -8,6 +8,15 @@ Checkpoints are the save points of a pipeline. They enable resume-from-failure, 
 
 ## Protocol
 
+Animation and animated-explainer have an unconditional top-level `sample` stage
+after approved scene_plan and before batch assets. Its canonical `sample_review`
+requires a real 5–8 second clip, inspected frames/playback, and explicit human
+approval. See `skills/meta/visual-sample-director.md`. Unlike diagnostic heartbeats
+in other pipelines, entering `sample` or a downstream stage with `in_progress`
+also checks predecessors. Changes to the approved script/storyboard/production
+plan invalidate the sample basis digest; re-sample and obtain approval before
+resuming batches. Existing checkpoints are not rewritten or auto-approved.
+
 ### Step 1: Check Manifest Policy
 
 Read the current stage's configuration from the pipeline manifest:
@@ -199,39 +208,24 @@ If a checkpoint exists with status `"awaiting_human"`:
 2. Present the checkpoint data for review
 3. Wait for approval before proceeding
 
-### Sample Checkpoint (Reference-Driven Productions)
+### Representative Sample Checkpoint
 
-When a production is reference-driven (VideoAnalysisBrief exists), there is an
-additional checkpoint between proposal approval and full production:
+For animation and animated-explainer, `sample` is a top-level stage after
+approved script and storyboard. It always requires human approval and produces
+a canonical `sample_review`; it is not a proposal sub-checkpoint. Present the
+actual 5–8 second clip, the inspected frames/playback findings, scene IDs, cost,
+and any concerns. Approve leads to batch assets; revise stays at sample; abort
+stops production. Follow `skills/meta/visual-sample-director.md`.
 
-| Stage | checkpoint_required | human_approval_default | Notes |
-|-------|--------------------|-----------------------|-------|
-| `sample` | true | true | Always requires human approval |
+For branded work, sample approval covers the demonstrated brand direction:
+actual type, palette, layout, imagery/atmosphere and motion, with reference-to-frame
+evidence in the review notes. A generic sample plus later logo/end-card overlays
+does not satisfy this gate. New branding or material direction changes require
+an updated canonical planning basis and a revised sample under the normal
+approval policy before remaining assets or full-video generation. Full-run
+preauthorization does not permit an unresolved direction mismatch to pass.
 
-The sample checkpoint:
-1. Presents: rendered sample clip (10-15 seconds)
-2. Cost: sample cost vs. projected full-video cost
-3. Action: approve (→ proceed to script), revise (→ re-generate sample), abort
-
-The sample checkpoint is NOT a pipeline stage — it's a sub-checkpoint within the
-proposal stage. It does not produce a canonical artifact. It produces a rendered
-preview clip stored at `projects/<name>/assets/sample/sample_v{N}.mp4`.
-
-**Presentation format:**
-```
-## Sample Preview Ready
-
-**Sample clip:** [path to sample_v1.mp4]
-- Duration: [X] seconds (hook + 1 middle scene)
-- Voice: [TTS provider + voice name]
-- Visuals: [description — AI images, Remotion animations, etc.]
-- Music: [source]
-
-**Sample cost:** $[X.XX]
-**Projected full video cost:** $[X.XX]
-
-Does this feel right? I can adjust: voice, visual style, pacing, music, colors.
-```
+Other pipelines retain the reference-sample policy declared in their manifests.
 
 ## Key Principles
 

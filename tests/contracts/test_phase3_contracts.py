@@ -711,7 +711,7 @@ class TestAnimatedExplainerManifest:
     def test_loads(self):
         manifest = load_pipeline("animated-explainer")
         assert manifest["name"] == "animated-explainer"
-        assert manifest["version"] == "2.0"
+        assert manifest["version"] == "2.1"
 
     def test_all_stages_present(self):
         manifest = load_pipeline("animated-explainer")
@@ -721,6 +721,7 @@ class TestAnimatedExplainerManifest:
             "proposal",
             "script",
             "scene_plan",
+            "sample",
             "assets",
             "edit",
             "compose",
@@ -734,7 +735,7 @@ class TestAnimatedExplainerManifest:
             assert "skill" in stage, f"Stage {stage['name']} missing skill"
             skill = get_stage_skill(manifest, stage["name"])
             assert skill is not None
-            assert skill.startswith("pipelines/explainer/")
+            assert skill.startswith("pipelines/explainer/") or skill == "meta/visual-sample-director"
 
     def test_every_stage_has_review_focus(self):
         manifest = load_pipeline("animated-explainer")

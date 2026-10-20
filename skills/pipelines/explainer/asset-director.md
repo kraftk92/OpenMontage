@@ -34,6 +34,15 @@ Quick routing for common explainer needs:
 | Tools | `tts_selector`, `image_selector`, `video_selector`, `diagram_gen`, `code_snippet`, `music_gen` — selectors auto-discover all available providers from the registry | Generation capabilities |
 | Cost tracker | `tools/cost_tracker.py` | Budget governance |
 
+## Sample approval before batch work (binding)
+
+The top-level `sample` stage must already be completed with explicit human
+approval. Write `assets/in_progress` before any batch call; the writer rejects
+missing, unapproved, or stale sample evidence. Reuse the approved sample assets
+and settings. Individual expensive asset-type samples below are additional
+checks when that type was not demonstrated; they never replace the composed
+sample gate. Atelier reuses design rules and mechanics, not finished scenes.
+
 ## Process
 
 ### Step 1: Inventory Required Assets
@@ -79,7 +88,7 @@ If the user rejects a sample:
 - Do not batch-generate until the sample is approved.
 - Max 3 sample iterations per asset type before escalating to the user for a decision.
 
-This step typically costs $0.03–0.08 total and prevents $1–3 of wasted generation.
+Price each additional sample from its actual tool estimate; no fixed price is promised.
 
 ### Step 3: Generate Narration
 

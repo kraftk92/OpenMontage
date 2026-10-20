@@ -34,6 +34,15 @@ Quick routing for common animation-pipeline needs:
 | Tools | `tts_selector`, `image_selector`, `video_selector`, `math_animate`, `diagram_gen`, `code_snippet`, `threejs_world`, `music_gen`, `fal_elevenlabs_music` — selectors auto-discover all available providers from the registry | Asset production options |
 | Playbook | Active style playbook | Visual consistency |
 
+## Sample approval before batch work (binding)
+
+The top-level `sample` stage must already be completed with explicit human
+approval. Write `assets/in_progress` before any batch call; the writer rejects
+missing, unapproved, or stale sample evidence. Reuse the approved sample assets
+and settings. Individual expensive asset-type samples below are additional
+checks when that type was not demonstrated; they never replace the composed
+sample gate. Atelier reuses design rules and mechanics, not finished scenes.
+
 ## Process
 
 ### 1. Start With Deterministic Assets

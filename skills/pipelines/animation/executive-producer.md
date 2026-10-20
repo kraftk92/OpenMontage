@@ -60,12 +60,13 @@ EP_STATE:
     reused_template_count: 0
   math_accuracy_notes: []      # constraints from research on what NOT to oversimplify
 
-  # Accumulated from each stage (8 stages)
+  # Accumulated from each stage (9 stages)
   artifacts:
     research: null      # → research_brief
     proposal: null      # → proposal_packet (includes approval gate)
     script: null        # → script
     scene_plan: null    # → scene_plan
+    sample: null        # → sample_review (approved before batch assets)
     assets: null        # → asset_manifest
     edit: null          # → edit_decisions
     compose: null       # → render_report
@@ -86,6 +87,15 @@ EP_STATE:
   issues_log: []             # all issues found, with resolution status
 ```
 
+## Creative contract precedence
+
+Read `meta/storyboard-contract` and `meta/visual-sample-director`. Stage gates
+still require explicit human approval; a review PASS never grants it. The sample
+is a bounded 5–8 second production after planning approval, before batch assets.
+Do not delegate unless the user has authorized delegation. In atelier mode all
+reuse/template guidance below refers to design rules and mechanics, not finished
+scene templates. New scene-plan checkpoints require version 1.1.
+
 ## Execution Protocol
 
 ### Phase 0: Initialize
@@ -97,7 +107,7 @@ EP_STATE:
 
 ### Phase 1: Execute Stages Serially
 
-For each stage in order: `research → proposal → script → scene_plan → assets → edit → compose → publish`
+For each stage in order: `research → proposal → script → scene_plan → sample → assets → edit → compose → publish`
 
 **Pre-production stages (research, proposal)** run before any money is spent:
 - **research** gathers topic data AND animation technique references via web search — zero cost
@@ -106,8 +116,8 @@ For each stage in order: `research → proposal → script → scene_plan → as
 
 After proposal approval, extract and store in EP_STATE:
 - `selected_concept` from `proposal_packet.selected_concept`
-- `animation_mode` from `selected_concept.animation_mode`
-- `reuse_strategy` from `selected_concept.reuse_strategy`
+- `animation_mode` from `proposal_packet.metadata.animation_plan.animation_mode`
+- `reuse_strategy` from `proposal_packet.metadata.animation_plan.reuse_strategy`
 - `production_plan` from `proposal_packet.production_plan`
 - `approved_budget_usd` from `proposal_packet.approval.approved_budget_usd`
 - `playbook` from `proposal_packet.selected_concept → suggested_playbook`
@@ -424,7 +434,7 @@ The EP doesn't replace any director skill — it wraps them. Each director skill
 
 - **Over-revising**: A "good enough" animation in the right mode is better than a "perfect" one after 5 rounds.
 - **Ignoring text sharpness**: The #1 animation quality issue. Always verify text readability at final resolution.
-- **Letting reuse strategy erode**: If the proposal specified 3 templates, the scene plan should use 3 templates, not 8 unique designs.
+- **Letting reuse strategy erode**: Preserve the approved design rules. Finished scene templates are allowed only in templated mode; atelier scenes remain distinct.
 - **Not probing outputs**: Always ffprobe the final video. Never trust metadata alone.
 - **Losing animation mode context**: If the proposal selected Manim, every downstream stage should know it's a Manim project. Don't let stages default to generic image_selector when programmatic animation was approved.
 - **Skipping math accuracy checks**: For technical topics, this is non-negotiable. A wrong animation is worse than no animation.

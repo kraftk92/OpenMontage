@@ -1,5 +1,5 @@
 name: animated-explainer
-version: "2.0"
+version: "2.1"
 description: >
   Generated explainer video from topic/idea - fully AI-produced with narration, visuals, and music.
   Features a research-first pre-production phase: the agent researches the topic, proposes concepts
@@ -8,6 +8,8 @@ category: generated
 stability: production
 
 default_checkpoint_policy: guided
+metadata:
+  storyboard_version: "1.1"
 
 # Reference video input support
 reference_input:
@@ -41,6 +43,8 @@ required_skills:
   - meta/skill-creator
   - meta/animation-runtime-selector
   - meta/voice-performance-director
+  - meta/visual-sample-director
+  - meta/storyboard-contract
 
 orchestration:
   mode: executive-producer
@@ -66,7 +70,7 @@ stages:
     produces:
       - research_brief
     tools_available: []
-    checkpoint_required: false
+    checkpoint_required: true
     human_approval_default: false
     review_focus:
       - Content landscape mapped with at least 3 existing pieces
@@ -98,21 +102,10 @@ stages:
       - Alternative production paths shown at different price points
       - "Concept differentiation from reference (if reference-driven)"
     success_criteria:
-      - Schema-valid proposal_packet with at least 3 concept_options
+      - Schema-valid proposal_packet with at least 2 distinct concept_options
       - selected_concept references a valid concept_id
       - cost_estimate has itemized line_items with per-tool costs
       - approval.status is "approved" or "approved_with_changes" before proceeding
-    sub_stages:
-      - name: sample
-        description: "10-15 second preview clip for reference-driven productions"
-        condition: "video_analysis_brief_exists"
-        human_approval_default: true
-        tools_available: [tts_selector, image_selector, video_selector, video_compose, audio_mixer]
-        review_focus:
-          - "Sample represents the approved concept faithfully"
-          - "Audio levels and voice match approved direction"
-          - "Visual style matches approved playbook"
-
   # ── Production ──────────────────────────────────────────────────
 
   - name: script
@@ -154,12 +147,30 @@ stages:
       - Asset feasibility - every required_asset uses a tool from the production plan
       - Playbook adherence - transitions, colors, pacing rules
     success_criteria:
-      - Schema-valid scene_plan with required_assets per scene
+      - Schema-valid scene_plan version 1.1 with exact copy, typography, references, timed motion, and linked asset tasks
       - At least 3 different scene types used
+
+  - name: sample
+    skill: meta/visual-sample-director
+    required_artifacts_in: [proposal_packet, script, scene_plan]
+    produces: [sample_review]
+    required_tools: [video_compose]
+    tools_available: [video_compose, hyperframes_compose, audio_mixer, tts_selector, image_selector, video_selector, diagram_gen, math_animate, code_snippet, music_gen]
+    checkpoint_required: true
+    human_approval_default: true
+    review_focus:
+      - Representative 5-8 second composed sample uses actual approved assets and runtime
+      - Exact copy, readability, visual direction, factual accuracy, and meaningful motion inspected
+      - Four real frames inspected and playback reviewed; no unresolved blockers
+      - Sample basis digest matches approved script, storyboard, and production plan
+    success_criteria:
+      - Schema-valid sample_review with real project-local sample and frame files
+      - Explicit human approval before entering batch assets
 
   - name: assets
     skill: pipelines/explainer/asset-director
     required_artifacts_in:
+      - sample_review
       - scene_plan
       - script
     optional_artifacts_in:

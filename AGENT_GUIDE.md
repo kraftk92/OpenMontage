@@ -48,6 +48,30 @@ If a model misses this distinction, it will often fall back to plain search + gu
 
 ## Rule Zero — All Production Goes Through a Pipeline
 
+### Brand and visual references come first
+
+Before developing visual concepts or locking a storyboard, complete the intake
+in `skills/meta/taste-direction.md`. Inspect existing project brand resources
+first, then ask once for missing logos, fonts, brand guidelines, and 2–3 visual
+references with what the user likes about them. Establish the audience and one
+main message. Reuse answers and resources already supplied; do not make the user
+assemble a complete brand pack or invent the treatment. If resources are missing,
+inspect the supplied website and find reference options for the user to choose
+from. Record gaps and any approved provisional or intentionally unbranded direction.
+
+A website reference requires visual inspection, not just reading its text or
+downloading its logo. Translate the inspected sources into concrete typography,
+palette, composition, imagery/material, and motion rules before planning scenes.
+Present those rules with the visual directions for approval.
+
+The representative sample must demonstrate those rules in its actual scene
+design. A logo, accent stripe, watermark, or end card alone does not establish
+brand fidelity. Review the sample against the approved assets and references
+before remaining assets or full-video generation. If branding or visual direction
+changes after sample approval, update the planning basis and produce a revised
+sample under the normal approval policy. Do not call the change a finishing
+overlay to keep approval attached to an outdated sample.
+
 **Every video production request MUST go through the pipeline system. No exceptions.**
 
 When the user asks to make, create, produce, or generate any video content — a trailer, explainer, clip, animation, or any other video — the agent must:
@@ -182,7 +206,16 @@ This applies especially to:
 
 The agent itself orchestrates the production state machine:
 
-`research -> proposal -> script -> scene_plan -> assets -> edit -> compose`
+`research -> proposal -> script -> scene_plan -> sample -> assets -> edit -> compose`
+
+The top-level `sample` stage applies to animation and animated-explainer. Read
+`skills/meta/storyboard-contract.md` for their v1.1 storyboard contract and
+`skills/meta/visual-sample-director.md` for the representative 5–8 second sample.
+It runs after planning approval, even without a supplied reference video, and
+requires explicit approval before batch assets. Other pipelines follow their
+own manifests. Existing v1.0 artifacts remain readable; new planning writes in
+these two pipelines must use v1.1. Resuming an older run requires the missing
+sample before further batch work; never fabricate retroactive approval.
 
 The agent:
 
@@ -515,7 +548,8 @@ Selectors route based on: user preference > availability > discovery order. They
 
 Before committing to execution, present:
 
-1. `4-5` concept directions when the brief is still open.
+1. At least two genuinely distinct visual directions with inspected references
+   and a recommendation; do not require the user to invent the treatment.
 2. Recommended pipeline.
 3. Recommended tool path.
 4. Alternative tool paths that are actually available.
@@ -560,6 +594,7 @@ Each stage produces one canonical artifact that becomes the contract for the nex
 | `idea` | `*-director.md` | `brief` | Clear hook, target platform, duration, tone, and user intent |
 | `script` | `*-director.md` | `script` | Structured sections, valid timing, coherent narration |
 | `scene_plan` | `*-director.md` | `scene_plan` | Ordered scenes, timings, asset requirements |
+| `sample` (animation/explainer) | `meta/visual-sample-director.md` | `sample_review` | Representative 5–8s clip, inspected frames and playback, explicit approval before batch assets |
 | `assets` | `*-director.md` | `asset_manifest` | Provenance, paths, model/tool metadata, scene linkage |
 | `edit` | `*-director.md` | `edit_decisions` | Concrete cuts, overlays, subtitle/music decisions |
 | `compose` | `*-director.md` | `render_report` | Output paths, encoding profile, verification notes |
@@ -577,7 +612,10 @@ The reviewer is a meta skill (`skills/meta/reviewer.md`) — advisory, never dir
 
 - Self-review after every stage execution, before checkpointing.
 - Load `review_focus` items from the pipeline manifest for the current stage.
-- Maximum two review rounds. After that, pass with warnings and move on.
+- Maximum two review rounds. Non-blocking taste suggestions may pass with
+  warnings; factual errors, missing required assets, broken renders, unapproved
+  substitutions, and sample-gate failures remain blockers. Record failure and
+  surface concrete options after the retry limit.
 - Findings categorized: critical (must fix), suggestion (should fix), nitpick (nice-to-have).
 - Critical findings -> fix and re-review. Suggestions -> note and proceed.
 - Check playbook `quality_rules` as constraints, not suggestions.

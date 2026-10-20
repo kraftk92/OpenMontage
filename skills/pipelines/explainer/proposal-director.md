@@ -66,14 +66,11 @@ Before starting proposal work, check if a VideoAnalysisBrief exists for this pro
 | **Same content, different platform** | Reference: 10-min YouTube → Ours: 60-sec Shorts version with faster pacing |
 | **Counter-take** | Reference: "Why AI will replace jobs" → Ours: "Why AI won't replace YOUR job" |
 
-**Mandatory Sample Protocol:** After the user approves a concept, BEFORE entering the
-script stage, produce a 10-15 second sample:
-1. The opening hook (first 5-7 seconds) + one representative middle scene
-2. Actual TTS voice, actual visual style, music bed snippet
-3. Present with: "Here's a preview. Does this feel right?"
-4. Iterate until approved, then proceed to full production
-
-**When no VideoAnalysisBrief is present:** Skip this step and proceed normally.
+**Mandatory Sample Protocol:** Every production, including a rough idea without
+an external video reference, follows the top-level `sample` stage AFTER approved
+script and scene_plan and BEFORE batch assets. Produce a representative 5–8 second
+composed sample under `skills/meta/visual-sample-director.md`. Do not generate a
+preview inside proposal, skip it, or batch the full assets before approval.
 
 ### Step 1: Absorb the Research
 
@@ -122,13 +119,19 @@ Before developing full concepts, present a quick mood board to catch direction m
 
 Ask: **"Does this FEEL like what you're imagining? Any of these off-track?"**
 
-This is cheaper than generating 3 full concepts and catches direction mismatches before they become expensive. If the user says "too corporate" or "more playful," you've saved an entire concept round.
+This is cheaper than generating full concepts and catches direction mismatches before they become expensive. If the user says "too corporate" or "more playful," you've saved an entire concept round.
 
 If the user confirms the direction, proceed. If they redirect, adjust your concept design to match.
 
+For each direction, put inspected reference URLs, relevant frame/time cues, and
+specific design observations in `proposal_packet.metadata.direction_references`,
+keyed by concept ID. Recommend one direction with a reason. The agent finds the
+references; the user approves the treatment. No paid mood-board generations
+without separate authorization.
+
 ### Step 3: Design Concept Options
 
-Build **at least 3 genuinely different concepts.** Start from the `angles_discovered` in the research brief, but elevate them into full production concepts.
+Build **at least 2 genuinely different visual directions.** Start from the `angles_discovered` in the research brief, but elevate them into full production concepts.
 
 For each concept, specify all fields in the `proposal_packet.concept_options` schema:
 
@@ -178,6 +181,12 @@ The existing playbooks (`clean-professional`, `flat-motion-graphics`, `minimalis
 
 Before choosing or generating a playbook, read `skills/meta/taste-direction.md` and write a compact `production_plan.taste_profile`. The taste profile records the design read, `visual_variance`, `motion_intensity`, `information_density`, reference strategy, and anti-patterns. Use it to explain why the selected playbook, `composition_mode`, and asset strategy fit the brief.
 
+Complete its brand-asset and visual-reference intake before developing concepts.
+Record inspected sources/preferences/gaps in `metadata.brand_intake`, translate
+them into concrete visual rules, and present those rules with the directions.
+The representative sample must demonstrate the actual brand treatment, beyond
+logo or end-card placement, before remaining assets or full-video generation.
+
 **How to design visual identity:**
 
 1. **Start from the content.** What colors does the subject naturally evoke? What textures, materials, lighting? A video about volcanoes should feel different from a video about meditation — in colors, motion speed, typography weight, and transition style.
@@ -213,7 +222,7 @@ Before choosing or generating a playbook, read `skills/meta/taste-direction.md` 
 - `chart` — bar, line, pie charts with animated data entry
 - `kpi_grid` — multi-stat dashboard layout
 
-**Important:** When Remotion is available, **always design for Remotion component scenes** rather than static AI-generated images with Ken Burns pan. This is the difference between a professional motion graphics video and a slideshow.
+**Authoring-mode precedence:** In `templated` mode the component list above is available. In `atelier` mode it is a mechanics reference only: hand-author subject-specific scenes under `skills/meta/bespoke-composition.md`. Remotion availability never mandates stock components or overrides the approved runtime.
 
 #### 3d: Duration and Platform
 
